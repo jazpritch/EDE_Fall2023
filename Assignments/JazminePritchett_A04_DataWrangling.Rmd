@@ -84,7 +84,7 @@ glimpse(PM25.2019.data)
 
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
-```{r}
+```{r Wrangling PM & O3 Data}
 #3
 
 #In the README file, dates are set as month, date, year, so format 
@@ -153,7 +153,7 @@ write.csv(PM25.2019.data, row.names= FALSE, file="./Data/Processed/EPAair_PM25_N
 
 11. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC1819_Processed.csv"
 
-```{r}
+```{r Combining Data}
 #7 
 
 PM.O3 <- rbind(O3.2018.data, O3.2019.data, PM25.2018.data, PM25.2019.data)
@@ -199,7 +199,7 @@ write.csv(PM.O3.spread, row.names= FALSE, file="./Data/Processed/EPAair_O3_PM25_
 
 13. Call up the dimensions of the summary dataset.
 
-```{r}
+```{r Summary of Data}
 
 #12
 
