@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Jazmine Pritchett"
 date: "Fall 2023"
 output: pdf_document
 geometry: margin=2.54cm
@@ -33,7 +33,33 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 ```{r initialize project}
 #1 
 
+#project set up by install of packages and importing of data.
+
+library(tidyverse)
+library(lubridate)
+library (cowplot)
+library(here)
+getwd()
+      
+PeterPaul.NTL <- read.csv(
+  file=here("Data/Processed_KEY/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"), 
+  stringsAsFactors = TRUE)
+
+NR.Litter <- read.csv(file=here("Data/Processed_KEY/NEON_NIWO_Litter_mass_trap_Processed.csv"),
+                    stringsAsFactors = TRUE)
+
+
 #2 
+
+#Dates were read as factors.
+
+class(PeterPaul.NTL$sampledate)
+
+PeterPaul.NTL$sampledate <- ymd(PeterPaul.NTL$sampledate)
+
+class(NR.Litter$collectDate)
+
+NR.Litter$collectDate <- ymd(NR.Litter$collectDate)
 
 ```
 ## Define your theme
@@ -47,6 +73,17 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 ```{r build plot theme}
 #3
 
+#Set a theme that aesthetically pleasing and that doesn't take away 
+#from data values.
+
+library(ggthemes)
+
+my_theme <- theme_base() + theme (legend.background = element_rect(
+      color='black',
+      fill = 'darkgrey'),
+    axis.ticks = element_line(
+      color='darkgrey', linewidth = 0.5))
+
 ```
 
 ## Create graphs
@@ -56,6 +93,17 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r plot total P vs PO4}
 #4 
+
+#Creation of graph with edits to title for aesthetics. 
+
+NTLplot <- ggplot(PeterPaul.NTL, aes(x = po4, y = tp_ug)) + 
+my_theme + geom_point(aes(color = lakename), na.rm = TRUE) +  
+xlim(0,25) + ylim(0, 125)+
+geom_smooth(color = 'black', method=lm) + labs(x= "Phosphate
+(ug)", y= "Total Phosphorus (ug)", title = "Total Phosphorus by Phosphate")
+print(NTLplot)
+
+theme_set(my_theme)
 
 ```
 
@@ -69,11 +117,36 @@ Tip:
 ```{r Create boxplots}
 #5 
 
+TempPlot <- PeterPaul.NTL %>% ggplot(aes(y = temperature_C, x = factor(month, levels = 1:12, 
+labels=month.abb ))) + 
+scale_x_discrete(name="Month", drop =FALSE)+ geom_boxplot(aes(color = lakename)) + labs(x= "Month", 
+y= "Temperature (C)")
+print(TempPlot)
+
+TPPlot <- PeterPaul.NTL %>% ggplot(aes(y = tp_ug, x = factor(month, levels = 1:12, 
+labels= month.abb
+))) + scale_x_discrete (name="Month", drop =FALSE)+ geom_boxplot(aes(color = lakename))+ 
+labs(x= "Month", y= "Phosphorus (ug)")
+print(TPPlot)
+
+TNPlot <-PeterPaul.NTL %>% ggplot(aes(y = tn_ug, x = factor(month, levels = 1:12, labels=month.abb 
+))) + scale_x_discrete(name="Month", drop =FALSE)+ geom_boxplot(aes(color = lakename))+ 
+labs(x= "Month", y= "Nitrogen (ug)")
+print(TNPlot)
+
+
+plot_grid(TempPlot + theme(legend.position = "top"), #legend included at the top for aligned axis.
+TPPlot + theme(legend.position="none"), TNPlot + theme(legend.position="none"),
+nrow=3, align= 'v', #align = v aligned
+#vertical axis plot when placing in the legend at the top.
+rel_heights = c(1.25,1))
+
+
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
 
-> Answer: 
+> Answer: Each lake is more prominent over warmer/summer months (May-Septemeber). There is also not much variance for each lake across variables and the months.
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the "Needles" functional group. Plot the dry mass of needle litter by date and separate by NLCD class with a color aesthetic. (no need to adjust the name of each land use)
 
@@ -82,11 +155,20 @@ Question: What do you observe about the variables of interest over seasons and b
 ```{r Plot litter}
 #6
 
+Needles_Group <- ggplot(subset(NR.Litter, functionalGroup == "Needles"), aes(x = collectDate,
+y = dryMass))+ geom_point(aes(color = nlcdClass))+ labs(x= "Collection Date", y= "Dry Mass (g)")
+print(Needles_Group)
+
 
 #7
 
+Needles_Facet <- ggplot(subset(NR.Litter, functionalGroup == "Needles"), aes(x = collectDate,
+y = dryMass))+ geom_point() + facet_wrap(vars(functionalGroup), nrow = 3) + labs(x= "Collection Date", 
+y= "Dry 
+Mass (g)") + facet_grid( functionalGroup ~ nlcdClass) #plotting Needles by facets of nlcd classes.
+print(Needles_Facet)
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
-> Answer:
+> Answer:While plot 6 is in color, values are overlapping. Because of this, I think plot 7 that includes facets helps the viewer easily compare each class of data.
