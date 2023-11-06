@@ -1,6 +1,7 @@
 ---
 title: "8: Time Series"
-author: "Environmental Data Analytics | Adapted by John Fay and Luana Lima | Developed by Kateri Salk"
+author: "Environmental Data Analytics
+| Adapted by John Fay and Luana Lima | Developed by Kateri Salk"
 date: "Fall 2023"
 output: pdf_document
 geometry: margin=2.54cm
@@ -80,6 +81,7 @@ Let's look at what the dataset contains for mean daily discharge.
 ggplot(EnoDischarge, aes(x = datetime, y = discharge.mean)) +
   geom_line() +
   labs(x = "", y = expression("Discharge (ft"^3*"/s)"))
+
 ```
 
 Notice there are missing data from 1971 to 1985. Gaps this large are generally an issue for time series analysis, as we don't have a continuous record of data or a good way to characterize any variability that happened over those years. We will illustrate a few workarounds to address these issues. 
@@ -224,6 +226,8 @@ f_year <- year(first(wind_data_clean$DATE))
 wind_data_ts <- ts(wind_data_clean$AWND.clean,
                    start=c(f_year,f_month),
                    frequency=12) 
+
+EnoDischarge.late_ts <- ts(EnoDischarge.late$discharge.mean, start = c(1985,1), frequency = 365)
 
 #decompose
 wind_data_decomp <- stl(wind_data_ts,s.window = "periodic")

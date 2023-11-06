@@ -253,9 +253,12 @@ denominator =  539.4972, tau = -0.143, 2-sided pvalue =0.046724).
 
 GaringerOzone.Components <- as.data.frame(Monthly_decomp$time.series[,1:3])
 
+
 GaringerOzone.Components <- mutate(GaringerOzone.Components, 
 Observed = GaringerOzone.monthly$Daily.Max.8.hour.Ozone.Concentration, 
 Date = GaringerOzone.monthly$Date)
+
+
 
 
 #16
