@@ -119,20 +119,23 @@ mapView(counties_sf, zcol = "AWATER")
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
 
+huc8_sf <- st_read(here('Data/Spatial/NCHUC8.shp')) 
 
 #Reveal the columns
 
+colnames(huc8_sf)
 
 #Check the CRS
 
+st_crs(huc8_sf) 
 
 #Examine some records
 head(huc8_sf)
 
 #View the data as a map, colored by the acreage in each
+mapView(huc8_sf, zcol = "ACRES")
 
-
-
+ggplot(huc8_sf) + geom_sf(aes(fill=ACRES)) + scale_fill_viridis_c()
 
 ```
 
@@ -143,9 +146,15 @@ head(huc8_sf)
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
 
-
+huc8_sf_UN <- st_read(here('Data/Spatial/NCHUC8.shp'))%>% filter(SUBBASIN == 'Upper Neuse') 
 
 #Create a map
+
+mapView(huc8_sf, col.regions = 'orange', layer.name = 'HUC 8') + 
+  mapview(huc8_sf_UN, col.regions ='purple', layer.name = 'Upper Neuse')
+
+
+
 
 
 
@@ -508,7 +517,7 @@ ggplot() +
 
 ## 4.2 Plotting with Leaflet
 
-Leaflet is the most powerful of the three. However it requires getting all our data back into the WGS 84 CRS.
+is the most powerful of the three. However it requires getting all our data back into the WGS 84 CRS.
 
 ### 4.2.1 Multiple layers in Leaflet
 
